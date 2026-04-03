@@ -1,19 +1,11 @@
 import pandas as pd
 from ml.retrain import retrain_model
 
-THRESHOLD = 10  # you can change
-
 def check_and_retrain():
-    try:
-        df = pd.read_csv("database/claims_db.csv")
-    except:
-        return "No data"
+    df = pd.read_csv("database/claims_db.csv")
 
-    # Only verified data
-    df = df[df["fraud_verified"].notnull()]
-
-    if len(df) >= THRESHOLD:
+    if len(df) > 10:
         retrain_model()
         return "Retrained"
-    
-    return f"Current verified data: {len(df)}"
+
+    return "Not enough data"
