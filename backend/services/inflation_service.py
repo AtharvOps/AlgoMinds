@@ -1,7 +1,15 @@
 def check_inflation(data):
+    risk = 0
+    reasons = []
+
     ratio = data["claim_amount"] / (data["repair_estimate"] + 1)
 
     if ratio > 5:
-        return 50, ["Claim amount inflated"]
+        risk += 50
+        reasons.append("Highly inflated claim")
 
-    return 0, []
+    elif ratio > 3:
+        risk += 25
+        reasons.append("Moderately inflated claim")
+
+    return risk, reasons

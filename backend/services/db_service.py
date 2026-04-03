@@ -1,15 +1,12 @@
 import pandas as pd
+import os
 
-def check_identity(data):
-    df = pd.read_csv("database/vehicle_claims.csv")
+def save_claim(data):
+    file = "database/claims_db.csv"
 
-    risk = 0
-    reasons = []
+    df = pd.DataFrame([data])
 
-    matches = df[df["user_phone"] == data["user_phone"]]
-
-    if len(matches) > 3:
-        risk += 40
-        reasons.append("Multiple claims from same phone")
-
-    return risk, reasons
+    if not os.path.exists(file):
+        df.to_csv(file, index=False)
+    else:
+        df.to_csv(file, mode='a', header=False, index=False)
