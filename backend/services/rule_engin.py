@@ -8,10 +8,10 @@ def apply_rules(data):
 
     if data["previous_claims"] > 4:
         risk += 25
-        reasons.append("Too many previous claims")
+        reasons.append("Frequent claimant")
 
-    if data["policy_duration"] < 1:
-        risk += 20
-        reasons.append("New policy with claim")
+    if data["policy_validity"] < 1:
+        risk += 40
+        reasons.append("Policy expired")
 
     return risk, reasons

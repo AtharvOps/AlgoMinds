@@ -1,9 +1,9 @@
 def calculate_score(scores):
     total = sum(scores)
 
-    if total > 150:
+    if total > 180:
         return "HIGH FRAUD", total
-    elif total > 80:
+    elif total > 100:
         return "MEDIUM FRAUD", total
     else:
         return "LOW RISK", total

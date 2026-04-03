@@ -1,9 +1,15 @@
-def detect_anomaly(data):
+def check_inflation(data):
     risk = 0
     reasons = []
 
-    if data["claim_amount"] > 5 * data["repair_estimate"]:
-        risk += 40
-        reasons.append("Abnormal claim ratio")
+    ratio = data["claim_amount"] / (data["repair_estimate"] + 1)
+
+    if ratio > 5:
+        risk += 50
+        reasons.append("Highly inflated claim")
+
+    elif ratio > 3:
+        risk += 25
+        reasons.append("Moderately inflated claim")
 
     return risk, reasons

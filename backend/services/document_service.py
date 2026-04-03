@@ -4,10 +4,6 @@ def verify_document(data):
 
     if data.get("document_verified", 1) == 0:
         risk += 40
-        reasons.append("Document not verified")
-
-    if data.get("claim_amount", 0) > 200000:
-        risk += 20
-        reasons.append("High claim with suspicious document")
+        reasons.append("Documents not verified")
 
     return risk, reasons

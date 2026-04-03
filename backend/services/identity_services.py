@@ -1,33 +1,25 @@
 import pandas as pd
 
 def check_identity(data):
-    try:
-        df = pd.read_csv("database/vehicle_claims.csv")
-    except:
-        return 0, []
-
     risk = 0
     reasons = []
 
-    user_phone = data.get("user_phone")
+    try:
+        df = pd.read_csv("database/claims_db.csv")
 
-    # 🔥 1. Same phone multiple times
-    phone_matches = df[df["user_phone"] == user_phone]
+        # Same phone reuse
+        if "user_phone" in df.columns:
+            if data["user_phone"] in df["user_phone"].values:
+                risk += 20
+                reasons.append("Phone reused in multiple claims")
 
-    if len(phone_matches) > 3:
-        risk += 40
-        reasons.append("Multiple claims linked to same phone number")
+        # Aadhaar reuse
+        if "aadhar_number" in df.columns:
+            if data["aadhar_number"] in df["aadhar_number"].values:
+                risk += 30
+                reasons.append("Aadhaar used multiple times")
 
-    # 🔥 2. Frequent claims behavior
-    if data.get("previous_claims", 0) > 4:
-        risk += 30
-        reasons.append("User has excessive previous claims")
-
-    # 🔥 3. Identity reuse + fraud history
-    fraud_matches = phone_matches[phone_matches["is_fraud"] == 1]
-
-    if len(fraud_matches) > 1:
-        risk += 50
-        reasons.append("Phone linked to previous fraudulent claims")
+    except:
+        pass
 
     return risk, reasons
