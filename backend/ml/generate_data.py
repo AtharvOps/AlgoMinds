@@ -1,106 +1,124 @@
 import pandas as pd
 import random
+import uuid
 
 rows = []
 
+vehicle_types = {
+    "car": ["sedan", "SUV", "hatchback", "XUV"],
+    "bike": ["sports", "cruiser", "scooty", "classic"]
+}
+
+cities = ["Pune", "Mumbai", "Delhi", "Bangalore"]
 garages = ["G001", "G002", "G003"]
 agents = ["A10", "A11", "A12"]
-cities = ["Pune", "Mumbai", "Delhi"]
 
-for i in range(1000):
+fraud_garage = "G002"
+fraud_agent = "A11"
 
-    claim_id = f"V{i}"
-    user_id = f"U{i}"
+for i in range(500):
 
-    # Identity fraud
-    user_phone = 9999999999 if i % 50 == 0 else random.randint(9000000000, 9999999999)
+    claim_id = str(uuid.uuid4())
+    user_id = str(uuid.uuid4())
 
-    vehicle_type = random.choice(["car", "bike"])
+    user_phone = random.randint(9000000000, 9999999999)
+    aadhar_number = random.randint(100000000000, 999999999999)
+
+    vehicle_type = random.choice(list(vehicle_types.keys()))
+    vehicle_subtype = random.choice(vehicle_types[vehicle_type])
     vehicle_age = random.randint(1, 10)
-    policy_duration = random.randint(1, 5)
+    vehicle_model = f"Model_{random.randint(1,50)}"
+    chassis_number = str(uuid.uuid4())[:10]
+
+    policy_number = str(uuid.uuid4())[:8]
+    policy_validity = random.randint(1, 5)
+
+    claim_type = random.choice(["accident", "theft"])
     previous_claims = random.randint(0, 6)
+    claim_freq = random.randint(0, 5)
 
     accident_type = random.choice(["minor", "major"])
     accident_severity = random.choice(["low", "medium", "high"])
 
-    repair_estimate = random.randint(5000, 100000)
-
-    # Bias collusion
-    garage_id = random.choices(["G001","G002","G003"], weights=[0.3,0.5,0.2])[0]
-    agent_id = random.choices(["A10","A11","A12"], weights=[0.3,0.5,0.2])[0]
-
-    garage_city = random.choice(cities)
     accident_location = random.choice(cities)
+    garage_city = random.choice(cities)
 
-    agent_phone = random.randint(9000000000, 9999999999)
+    garage_id = random.choice(garages)
+    agent_id = random.choice(agents)
+
+    repair_estimate = random.randint(5000, 50000)
 
     document_verified = random.choice([0, 1])
-
-    # 🆕 Image features
-    image_uploaded = random.choice([0, 1])
     damage_consistency = random.choice([0, 1])
+    image_uploaded = random.choice([0, 1])
 
     days_to_claim = random.randint(1, 10)
-    claim_freq = random.randint(0, 5)
 
+    # =========================
+    # FRAUD LOGIC
+    # =========================
     fraud = 0
 
-    # ---------- Balanced Fraud Logic ----------
-
-    # Inflation
-    if random.random() < 0.25:
+    # Inflation fraud
+    if random.random() < 0.3:
         claim_amount = repair_estimate * random.randint(3, 8)
         fraud = 1
     else:
         claim_amount = repair_estimate + random.randint(0, 20000)
 
-    # Behavioral
-    if previous_claims > 4 and random.random() < 0.6:
+    # Frequent claims fraud
+    if previous_claims > 4:
         fraud = 1
 
     # Document fraud
-    if document_verified == 0 and random.random() < 0.7:
+    if document_verified == 0 and claim_amount > 100000:
         fraud = 1
 
-    # Image fraud
-    if damage_consistency == 0 and random.random() < 0.7:
+    # Image mismatch fraud
+    if damage_consistency == 0 and claim_amount > 80000:
         fraud = 1
 
-    # Collusion (STRONG)
-    if garage_id == "G002" and agent_id == "A11":
-        fraud = 1
-        claim_amount = repair_estimate * random.randint(4, 10)
+    # Collusion fraud
+    if garage_id == fraud_garage and agent_id == fraud_agent:
+        if random.random() < 0.9:
+            fraud = 1
+            claim_amount = repair_estimate * random.randint(5, 10)
 
-    # Location fraud
-    if garage_city != accident_location and random.random() < 0.5:
+    # Location mismatch
+    if garage_city != accident_location and claim_amount > 150000:
         fraud = 1
 
     rows.append({
         "claim_id": claim_id,
         "user_id": user_id,
         "user_phone": user_phone,
+        "aadhar_number": aadhar_number,
         "vehicle_type": vehicle_type,
+        "vehicle_subtype": vehicle_subtype,
         "vehicle_age": vehicle_age,
-        "policy_duration": policy_duration,
+        "vehicle_model": vehicle_model,
+        "chassis_number": chassis_number,
+        "policy_number": policy_number,
+        "policy_validity": policy_validity,
+        "claim_type": claim_type,
         "previous_claims": previous_claims,
+        "claim_frequency_30d": claim_freq,
         "accident_type": accident_type,
         "accident_severity": accident_severity,
+        "accident_location": accident_location,
+        "garage_city": garage_city,
         "claim_amount": claim_amount,
         "repair_estimate": repair_estimate,
         "garage_id": garage_id,
-        "garage_city": garage_city,
         "agent_id": agent_id,
-        "agent_phone": agent_phone,
         "document_verified": document_verified,
-        "image_uploaded": image_uploaded,
         "damage_consistency": damage_consistency,
-        "accident_location": accident_location,
+        "image_uploaded": image_uploaded,
         "days_to_claim": days_to_claim,
-        "claim_frequency_30d": claim_freq,
         "is_fraud": fraud
     })
 
 df = pd.DataFrame(rows)
 df.to_csv("../database/vehicle_claims.csv", index=False)
 
-print("✅ Dataset generated!")
+print("✅ Dataset generated with realistic fraud patterns!")
