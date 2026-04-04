@@ -1,0 +1,2 @@
+user_id,username,email,password,full_name,phone,role,is_active,created_at,last_login
+9b19d5fc-f71c-4f8b-9397-da61591d096d,testuser,test@example.com,ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f,Test User,1234567890,user,True,2026-04-04 06:42:52,2026-04-04 06:42:54

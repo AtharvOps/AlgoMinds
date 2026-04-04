@@ -8,27 +8,25 @@ def save_claim(data):
     """
     try:
         # Define the CSV file path
-        csv_file = "database/claims.csv"
+        csv_file = "database/claims_db.csv"
         
-        # Extract relevant fields for CSV storage with proper column names
+        # Extract relevant fields for CSV storage
         claim_record = {
-            'claim_id': data.get('claim_id', ''),
-            'user_id': data.get('user_id', ''),
-            'claim_amount': float(data.get('claim_amount', 0)),
-            'repair_estimate': float(data.get('repair_estimate', 0)),
-            'previous_claims': int(data.get('previous_claims', 0)),
-            'policy_validity': int(data.get('policy_validity', 0)),
-            'image_uploaded': int(data.get('image_uploaded', 0)),
-            'damage_consistency': int(data.get('damage_consistency', 1)),
-            'user_phone': data.get('user_phone', ''),
+            'claim_amount': data.get('claim_amount', 0),
+            'repair_estimate': data.get('repair_estimates', 0),
+            'previous_claims': data.get('previous_claims', 0),
+            'policy_validity': data.get('policy_duration', 0),
+            'image_uploaded': data.get('image_uploaded', 0),
+            'damage_consistency': data.get('damage_consistency', 1),
+            'user_phone': data.get('phone_number', ''),
             'aadhar_number': data.get('aadhar_number', ''),
             'garage_id': data.get('garage_id', ''),
             'agent_id': data.get('agent_id', ''),
             'garage_city': data.get('garage_city', ''),
             'accident_location': data.get('accident_location', ''),
-            'is_fraud': int(data.get('is_fraud', 0)),
-            'submission_date': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-            'status': 'pending'
+            'claim_id': data.get('claim_id', ''),
+            'user_id': data.get('user_id', ''),
+            'is_fraud': data.get('is_fraud', 0)
         }
         
         # Check if file exists
@@ -37,10 +35,10 @@ def save_claim(data):
         # Convert to DataFrame
         df = pd.DataFrame([claim_record])
         
-        # Append to CSV with proper header handling
+        # Append to CSV
         df.to_csv(csv_file, mode='a', header=not file_exists, index=False)
         
-        print(f"Claim {claim_record['claim_id']} saved successfully to {csv_file}")
+        print(f"Claim {claim_record['claim_id']} saved successfully to database")
         return True
         
     except Exception as e:
@@ -52,7 +50,7 @@ def get_all_claims():
     Retrieve all claims from the database
     """
     try:
-        csv_file = "database/claims.csv"
+        csv_file = "database/claims_db.csv"
         
         if not os.path.exists(csv_file):
             return pd.DataFrame()
