@@ -1,9 +1,10 @@
 import sys
 import os
 
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+# Change the path to the parent directory to access the 'services' module
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from services.ml_services import predict_ml
+from services.ml_service import predict_ml
 
 sample = {
     "claim_amount": 300000,
