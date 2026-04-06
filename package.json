@@ -1,0 +1,27 @@
+{
+  "dependencies": {
+    "@tailwindcss/vite": "^4.2.2",
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "tailwindcss": "^4.2.2"
+  },
+  "name": "algominds",
+  "version": "1.0.0",
+  "description": "Intelligent Insurance Fraud Detection System.\r AI - powered fraud detection system.",
+  "main": "mock-backend.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AtharvOps/AlgoMinds.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/AtharvOps/AlgoMinds/issues"
+  },
+  "homepage": "https://github.com/AtharvOps/AlgoMinds#readme"
+}
