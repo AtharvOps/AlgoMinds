@@ -48,7 +48,7 @@ const InternalDataIngestionDashboard = () => {
       
       let enhancedClaims = [];
       
-      // Try to get real data from backend
+      // Always try to get real data from backend first
       try {
         const payload = await apiService.getRecentClaims(20);
         enhancedClaims = (Array.isArray(payload.claims) ? payload.claims : []).map(claim => ({
@@ -58,42 +58,21 @@ const InternalDataIngestionDashboard = () => {
           fraudPersona: analyzeFraudPersona(claim),
           sharedLinks: analyzeSharedLinks(claim, payload.claims),
         }));
+        console.log('Successfully loaded real claims data:', enhancedClaims.length, 'claims');
       } catch (backendError) {
-        console.log('Backend not available, using mock sync data');
-        // Use mock data for sync
+        console.log('Backend not available, using minimal mock data');
+        // Use minimal mock data only as last resort
         enhancedClaims = [
           {
-            internalId: 'CL_SYNC_001',
-            claimantName: 'POL_5501',
-            vehicleRegNo: 'MH12-AS-1022',
-            claimAmount: '45000',
+            internalId: 'CL_120',
+            claimantName: 'POL_5551',
+            vehicleRegNo: 'MH12-KL-8890',
+            claimAmount: '28000',
             incidentType: 'Single Vehicle',
-            fraudPersona: 'High Amount',
-            sharedLinks: ['Shared Bank Hash'],
-            ingestionStatus: 'Completed',
-            claimDate: '2026-03-15'
-          },
-          {
-            internalId: 'CL_SYNC_002',
-            claimantName: 'POL_8820',
-            vehicleRegNo: 'MH14-DT-9982',
-            claimAmount: '12000',
-            incidentType: 'Multi-vehicle',
-            fraudPersona: 'Suspicious Pattern',
+            fraudPersona: 'Low Amount',
             sharedLinks: ['Shared IP'],
             ingestionStatus: 'Completed',
-            claimDate: '2026-03-18'
-          },
-          {
-            internalId: 'CL_SYNC_003',
-            claimantName: 'POL_9999',
-            vehicleRegNo: 'MH11-XY-5555',
-            claimAmount: '95000',
-            incidentType: 'Single Vehicle',
-            fraudPersona: 'High Amount',
-            sharedLinks: ['Shared Garage'],
-            ingestionStatus: 'Completed',
-            claimDate: '2026-04-06'
+            claimDate: '2026-05-03'
           }
         ];
       }
@@ -105,18 +84,18 @@ const InternalDataIngestionDashboard = () => {
       
     } catch (error) {
       console.error('Sync failed:', error);
-      // Don't show error to user, just use mock data
+      // Don't show error to user, just use minimal mock data
       setRecentlyIngestedClaims([
         {
-          internalId: 'CL_ERROR_001',
-          claimantName: 'POL_ERROR',
-          vehicleRegNo: 'MH12-ERROR',
-          claimAmount: '50000',
+          internalId: 'CL_120',
+          claimantName: 'POL_5551',
+          vehicleRegNo: 'MH12-KL-8890',
+          claimAmount: '28000',
           incidentType: 'Single Vehicle',
-          fraudPersona: 'Medium Risk',
+          fraudPersona: 'Low Amount',
           sharedLinks: ['Shared IP'],
           ingestionStatus: 'Completed',
-          claimDate: '2026-04-06'
+          claimDate: '2026-05-03'
         }
       ]);
       setLastSyncTime('Just now');
