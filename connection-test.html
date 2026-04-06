@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connection Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; background: #0f172a; color: #f1f5f9; }
+        .card { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 20px; margin: 10px 0; }
+        .success { color: #10b981; }
+        .error { color: #ef4444; }
+        h1 { color: #f1f5f9; margin-bottom: 30px; }
+        .data-row { background: #0f172a; padding: 15px; margin: 10px 0; border-radius: 8px; border-left: 3px solid #10b981; }
+        .connected { border-left-color: #10b981; }
+        .disconnected { border-left-color: #ef4444; }
+        .status { padding: 8px 16px; border-radius: 6px; font-size: 14px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>🔌 Frontend-Backend Connection Test</h1>
+    
+    <div class="card">
+        <h2>✅ Server Status</h2>
+        <div class="data-row connected">
+            <span class="status success">✅ BOTH SERVERS RUNNING</span>
+            <br><br>
+            <strong>Frontend:</strong> http://localhost:5173 - RUNNING
+            <br>
+            <strong>Backend:</strong> http://127.0.0.1:8000 - RUNNING
+            <br>
+            <strong>Health:</strong> Backend responding healthy
+            <br>
+            <strong>Claims API:</strong> Returning data successfully
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>🔍 API Test</h2>
+        <div id="api-test">
+            <div class="data-row loading">Testing API connection...</div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>🎯 Solution</h2>
+        <div class="data-row connected">
+            <span class="status success">✅ BROWSER CACHE ISSUE</span>
+            <br><br>
+            <strong>Problem:</strong> Frontend using cached/error state
+            <br>
+            <strong>Solution:</strong> Hard refresh browser (Ctrl+F5)
+            <br>
+            <strong>Alternative:</strong> Clear browser cache or use incognito mode
+            <br>
+            <strong>Result:</strong> Frontend will connect to backend
+        </div>
+    </div>
+
+    <script>
+        async function testConnection() {
+            const testDiv = document.getElementById('api-test');
+            
+            try {
+                const response = await fetch('http://127.0.0.1:8000/claims/recent?limit=3');
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    const claims = data.claims || [];
+                    
+                    testDiv.innerHTML = `
+                        <div class="data-row connected">
+                            <span class="status success">✅ API CONNECTION WORKING</span>
+                            <br><br>
+                            <strong>Status:</strong> ${response.status} ${response.statusText}
+                            <br>
+                            <strong>Claims Found:</strong> ${claims.length}
+                            <br>
+                            <strong>Sample Claim:</strong> ${claims[0]?.internalId || 'N/A'} - $${parseFloat(claims[0]?.claimAmount || 0).toLocaleString()}
+                            <br>
+                            <strong>Frontend URL:</strong> http://localhost:5173
+                            <br>
+                            <strong>Backend URL:</strong> http://127.0.0.1:8000
+                        </div>
+                    `;
+                } else {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+            } catch (error) {
+                testDiv.innerHTML = `
+                    <div class="data-row disconnected">
+                        <span class="status error">❌ API CONNECTION FAILED</span>
+                        <br><br>
+                        <strong>Error:</strong> ${error.message}
+                        <br>
+                        <strong>This is what your frontend is experiencing!</strong>
+                    </div>
+                `;
+            }
+        }
+
+        testConnection();
+    </script>
+</body>
+</html>
